@@ -1,0 +1,913 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Canteen AI | Feedback System</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --green:#0f766e;
+  --green-dark:#115e59;
+  --bg:#f3f7f6;
+  --ink:#122b27;
+  --muted:#6b7c77;
+  --card:#fff;
+  --shadow:0 10px 30px rgba(15,118,110,.10);
+  --radius:18px;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--ink);
+  font-family:"Poppins",Arial,sans-serif;
+}
+
+header{
+  position:relative;
+  padding:50px 6% 75px;
+  color:white;
+  background:linear-gradient(135deg,#0f766e,#134e4a 55%,#065f46);
+  overflow:hidden;
+}
+header::before,
+header::after{
+  content:"";
+  position:absolute;
+  border-radius:50%;
+  background:rgba(255,255,255,.09);
+}
+header::before{width:250px;height:250px;top:-90px;right:-60px}
+header::after{width:170px;height:170px;bottom:-70px;left:-40px}
+
+.header-content{
+  max-width:1050px;
+  margin:auto;
+  position:relative;
+  z-index:1;
+}
+.badge{
+  display:inline-block;
+  background:rgba(255,255,255,.16);
+  padding:8px 14px;
+  border-radius:30px;
+  font-size:13px;
+}
+header h1{
+  margin:16px 0 10px;
+  font-size:clamp(30px,5vw,44px);
+}
+header h1 span{
+  background:linear-gradient(90deg,#a7f3d0,#fef3c7);
+  -webkit-background-clip:text;
+  background-clip:text;
+  color:transparent;
+}
+header p{
+  margin:0;
+  max-width:620px;
+  color:#d1fae5;
+  font-size:15px;
+  line-height:1.6;
+}
+
+main{
+  max-width:1050px;
+  margin:-45px auto 0;
+  padding:0 18px 45px;
+  position:relative;
+  z-index:2;
+}
+
+section{
+  background:var(--card);
+  padding:25px;
+  border-radius:var(--radius);
+  border:1px solid rgba(15,118,110,.08);
+  box-shadow:var(--shadow);
+  margin-top:18px;
+}
+
+h2{margin:0 0 6px;font-size:20px}
+h3{margin:0 0 8px}
+h4{margin:0 0 6px;font-size:15px}
+.section-sub{
+  margin:0 0 18px;
+  color:var(--muted);
+  font-size:14px;
+}
+
+label{
+  display:block;
+  font-size:14px;
+  font-weight:600;
+  margin:16px 0 7px;
+}
+
+select,input,textarea{
+  width:100%;
+  padding:13px 15px;
+  border:1.5px solid #d8e5e1;
+  border-radius:12px;
+  font:inherit;
+  outline:none;
+  background:#fbfdfc;
+  transition:.2s;
+}
+textarea{min-height:130px;resize:vertical}
+select:focus,input:focus,textarea:focus{
+  border-color:var(--green);
+  box-shadow:0 0 0 4px rgba(15,118,110,.10);
+}
+
+button{
+  border:0;
+  padding:13px 20px;
+  border-radius:12px;
+  font:inherit;
+  font-weight:600;
+  cursor:pointer;
+  transition:.2s;
+}
+button.primary{
+  background:linear-gradient(135deg,#0f766e,#0d9488);
+  color:white;
+  box-shadow:0 8px 18px rgba(15,118,110,.22);
+}
+button.secondary{
+  background:#e6f4f0;
+  color:var(--green-dark);
+}
+button.danger{
+  background:#fee2e2;
+  color:#b91c1c;
+}
+button:hover{
+  transform:translateY(-2px);
+  filter:brightness(1.03);
+}
+.full{width:100%;margin-top:20px}
+
+.role-buttons{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
+  gap:16px;
+}
+.role-card{
+  padding:25px;
+  border-radius:16px;
+  border:1.5px solid #dcebe6;
+  background:#fbfdfc;
+  cursor:pointer;
+  transition:.25s;
+  text-align:left;
+}
+.role-card:hover{
+  border-color:var(--green);
+  transform:translateY(-4px);
+  box-shadow:0 12px 25px rgba(15,118,110,.14);
+}
+.role-card h3{
+  margin:10px 0 6px;
+  font-size:18px;
+}
+.role-icon{
+  width:48px;height:48px;
+  display:grid;
+  place-items:center;
+  font-size:23px;
+  background:#e6f4f0;
+  border-radius:14px;
+}
+
+.rating{display:flex;gap:10px}
+.rating button{
+  flex:1;
+  background:#e6f4f0;
+  color:var(--green-dark);
+  font-weight:700;
+}
+.rating button.active{
+  background:linear-gradient(135deg,#0f766e,#0d9488);
+  color:white;
+}
+
+.message{
+  margin-top:16px;
+  padding:14px 16px;
+  border-radius:12px;
+  font-size:14px;
+}
+.success{
+  background:#ecfdf5;
+  color:#15803d;
+  border-left:4px solid #22c55e;
+}
+.error{
+  background:#fef2f2;
+  color:#b91c1c;
+  border-left:4px solid #ef4444;
+}
+
+.stats{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(190px,1fr));
+  gap:16px;
+}
+.stat-card{
+  background:var(--card);
+  padding:22px;
+  border-radius:var(--radius);
+  border:1px solid rgba(15,118,110,.08);
+  box-shadow:var(--shadow);
+  transition:.25s;
+}
+.stat-card:hover{transform:translateY(-5px)}
+.stat-icon{
+  width:44px;height:44px;
+  display:grid;place-items:center;
+  border-radius:14px;
+  font-size:21px;
+  margin-bottom:14px;
+}
+.icon-total{background:#e0f2fe}
+.icon-positive{background:#dcfce7}
+.icon-neutral{background:#fef9c3}
+.icon-negative{background:#fee2e2}
+.stat-value{font-size:30px;font-weight:700}
+.stat-label{margin-top:6px;font-size:13px;color:var(--muted)}
+
+.columns{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+  gap:18px;
+}
+.columns section{margin-top:0}
+
+.category{margin-bottom:16px}
+.category-top{
+  display:flex;
+  justify-content:space-between;
+  font-size:14px;
+  font-weight:500;
+  margin-bottom:7px;
+}
+.bar{
+  height:10px;
+  background:#e6efec;
+  border-radius:20px;
+  overflow:hidden;
+}
+.fill{
+  height:100%;
+  background:linear-gradient(90deg,#0f766e,#34d399);
+  border-radius:20px;
+}
+
+.suggestion{
+  padding:15px;
+  background:#f8fafc;
+  border:1px solid #e5efec;
+  border-radius:14px;
+  margin-bottom:12px;
+  font-size:14px;
+  line-height:1.6;
+}
+.suggestion b{color:var(--green-dark)}
+
+.table-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  flex-wrap:wrap;
+}
+.tablewrap{
+  overflow-x:auto;
+  border-radius:14px;
+  border:1px solid #e5efec;
+  margin-top:16px;
+}
+table{
+  width:100%;
+  border-collapse:collapse;
+  font-size:14px;
+  min-width:700px;
+}
+th,td{
+  text-align:left;
+  padding:13px 15px;
+  border-bottom:1px solid #eef3f1;
+}
+th{
+  background:#f3f8f6;
+  color:var(--green-dark);
+}
+tbody tr:hover{background:#f8fbfa}
+
+.pill{
+  display:inline-block;
+  padding:5px 11px;
+  border-radius:20px;
+  font-size:12px;
+  font-weight:600;
+}
+.Positive{background:#dcfce7;color:#15803d}
+.Neutral{background:#fef9c3;color:#a16207}
+.Negative{background:#fee2e2;color:#b91c1c}
+
+/* Improvement Actions */
+.improvement-form{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:14px;
+}
+
+.improvement-list{
+  margin-top:20px;
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+  gap:14px;
+}
+
+.improvement-card{
+  background:#f8fafc;
+  border:1px solid #e5efec;
+  border-left:5px solid #f59e0b;
+  border-radius:14px;
+  padding:16px;
+}
+
+.improvement-card.completed{
+  border-left-color:#22c55e;
+  background:#f0fdf4;
+}
+
+.improvement-card.in-progress{
+  border-left-color:#3b82f6;
+  background:#eff6ff;
+}
+
+.improvement-meta{
+  font-size:12px;
+  color:var(--muted);
+  margin-bottom:12px;
+}
+
+.status-pill{
+  display:inline-block;
+  padding:5px 11px;
+  border-radius:20px;
+  font-size:12px;
+  font-weight:600;
+  margin-bottom:12px;
+}
+
+.status-Pending{
+  background:#fef3c7;
+  color:#a16207;
+}
+
+.status-InProgress{
+  background:#dbeafe;
+  color:#1d4ed8;
+}
+
+.status-Completed{
+  background:#dcfce7;
+  color:#15803d;
+}
+
+.improvement-actions{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+}
+
+.improvement-actions button{
+  padding:8px 12px;
+  font-size:12px;
+  border-radius:9px;
+}
+
+.hidden{display:none}
+
+footer{
+  text-align:center;
+  color:var(--muted);
+  font-size:13px;
+  padding:25px 18px 35px;
+}
+
+@media(max-width:600px){
+  header{padding:40px 20px 70px}
+  section{padding:20px}
+  .table-header{flex-direction:column;align-items:flex-start}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-content">
+    <div class="badge">🍽️ Canteen AI Feedback System</div>
+    <h1>Welcome to <span>Canteen AI</span></h1>
+    <p>Students can share feedback about the canteen. Canteen staff can securely log in to analyze feedback and manage improvements.</p>
+  </div>
+</header>
+
+<main>
+
+  <!-- Role Selection -->
+  <section id="roleSection">
+    <h2>Choose how you want to continue</h2>
+    <p class="section-sub">Select whether you are a student giving feedback or canteen staff analyzing feedback.</p>
+
+    <div class="role-buttons">
+      <button class="role-card" onclick="showStudent()">
+        <div class="role-icon">🎓</div>
+        <h3>I am a Student</h3>
+        <p class="section-sub" style="margin:0">Submit anonymous feedback about food, hygiene, price, service and more.</p>
+      </button>
+
+      <button class="role-card" onclick="showAdminLogin()">
+        <div class="role-icon">🔐</div>
+        <h3>I am Canteen Staff</h3>
+        <p class="section-sub" style="margin:0">Log in to view feedback analysis and manage improvements.</p>
+      </button>
+    </div>
+  </section>
+
+  <!-- Student Feedback -->
+  <section id="studentSection" class="hidden">
+    <h2>📝 Submit Your Feedback</h2>
+    <p class="section-sub">Your response is anonymous. Please give honest and respectful feedback.</p>
+
+    <label for="category">Feedback category</label>
+    <select id="category">
+      <option>Food Quality</option>
+      <option>Hygiene</option>
+      <option>Price</option>
+      <option>Service</option>
+      <option>Variety</option>
+      <option>Portion Size</option>
+      <option>Ambience</option>
+      <option>General Feedback</option>
+    </select>
+
+    <label>Overall rating</label>
+    <div class="rating" id="rating">
+      <button type="button" data-value="1">1</button>
+      <button type="button" data-value="2">2</button>
+      <button type="button" data-value="3">3</button>
+      <button type="button" data-value="4">4</button>
+      <button type="button" data-value="5">5</button>
+    </div>
+
+    <label for="feedbackText">Your feedback</label>
+    <textarea id="feedbackText" placeholder="Example: The food is tasty, but the tables should be cleaned more often."></textarea>
+
+    <button class="primary full" onclick="submitFeedback()">Submit feedback</button>
+    <button class="secondary full" onclick="backToHome()">Back to home</button>
+
+    <div id="studentMessage"></div>
+  </section>
+
+  <!-- Admin Login -->
+  <section id="adminLoginSection" class="hidden">
+    <h2>🔐 Canteen Staff Login</h2>
+    <p class="section-sub">Only canteen staff can access the feedback analysis dashboard.</p>
+
+    <label for="adminPassword">Admin password</label>
+    <input type="password" id="adminPassword" placeholder="Enter admin password">
+
+    <button class="primary full" onclick="loginAdmin()">Login</button>
+    <button class="secondary full" onclick="backToHome()">Back to home</button>
+
+    <div id="loginMessage"></div>
+  </section>
+
+  <!-- Admin Dashboard -->
+  <div id="adminDashboard" class="hidden">
+
+    <div class="stats">
+      <div class="stat-card">
+        <div class="stat-icon icon-total">💬</div>
+        <div class="stat-value" id="total">0</div>
+        <div class="stat-label">Total feedback</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon icon-positive">😊</div>
+        <div class="stat-value" id="positive">0</div>
+        <div class="stat-label">Positive</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon icon-neutral">😐</div>
+        <div class="stat-value" id="neutral">0</div>
+        <div class="stat-label">Neutral</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon icon-negative">☹️</div>
+        <div class="stat-value" id="negative">0</div>
+        <div class="stat-label">Needs attention</div>
+      </div>
+    </div>
+
+    <div class="columns">
+      <section>
+        <h2>📊 Category Analysis</h2>
+        <p class="section-sub">Feedback received in each area.</p>
+        <div id="categories" class="section-sub">No feedback yet.</div>
+      </section>
+
+      <section>
+        <h2>🤖 Improvement Suggestions</h2>
+        <p class="section-sub">Based on negative and low-rated feedback.</p>
+        <div id="suggestions" class="section-sub">No suggestions yet.</div>
+      </section>
+    </div>
+
+    <section>
+      <div class="table-header">
+        <h2>📋 All Student Feedback</h2>
+        <div>
+          <button class="secondary" onclick="backToHome()">Logout</button>
+          <button class="danger" onclick="clearFeedback()">Clear all</button>
+        </div>
+      </div>
+
+      <div class="tablewrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Feedback</th>
+              <th>Category</th>
+              <th>Rating</th>
+              <th>Sentiment</th>
+            </tr>
+          </thead>
+          <tbody id="feedbackTable">
+            <tr><td colspan="5">No feedback submitted yet.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Improvement Actions -->
+    <section>
+      <h2>🛠️ Improvement Actions</h2>
+      <p class="section-sub">Add and track improvements based on student feedback.</p>
+
+      <div class="improvement-form">
+        <div>
+          <label for="improvementTitle">Improvement title</label>
+          <input type="text" id="improvementTitle" placeholder="Example: Increase table cleaning frequency">
+        </div>
+
+        <div>
+          <label for="improvementCategory">Related category</label>
+          <select id="improvementCategory">
+            <option>Food Quality</option>
+            <option>Hygiene</option>
+            <option>Price</option>
+            <option>Service</option>
+            <option>Variety</option>
+            <option>Portion Size</option>
+            <option>Ambience</option>
+            <option>General Feedback</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="improvementStatus">Status</label>
+          <select id="improvementStatus">
+            <option>Pending</option>
+            <option>In Progress</option>
+            <option>Completed</option>
+          </select>
+        </div>
+      </div>
+
+      <button class="primary" onclick="addImprovement()">Add improvement</button>
+
+      <div id="improvementList" class="improvement-list"></div>
+    </section>
+
+  </div>
+
+</main>
+
+<footer>Canteen AI · Student feedback to actionable insights</footer>
+
+<script>
+const STORAGE_KEY="canteenFeedback";
+const IMPROVEMENT_KEY="canteenImprovements";
+const ADMIN_PASSWORD="canteen123";
+let selectedRating=0;
+
+const positiveWords=[
+"good","great","excellent","love","loved","tasty","delicious","fresh",
+"clean","friendly","helpful","affordable","fast","best","nice","enjoy",
+"enjoyed","perfect","amazing","satisfied","wonderful","improved"
+];
+
+const negativeWords=[
+"bad","poor","terrible","hate","hated","stale","dirty","expensive",
+"overpriced","slow","rude","delay","delayed","unhygienic","unclean",
+"disappointed","awful","worst","boring","cold","raw","oily","overcooked",
+"undercooked","crowded","shortage","problem","problems","not","never",
+"lacking","lack","waste","flies","insects","small"
+];
+
+/* Navigation */
+function hideAll(){
+  document.getElementById("roleSection").classList.add("hidden");
+  document.getElementById("studentSection").classList.add("hidden");
+  document.getElementById("adminLoginSection").classList.add("hidden");
+  document.getElementById("adminDashboard").classList.add("hidden");
+}
+
+function backToHome(){
+  hideAll();
+  document.getElementById("roleSection").classList.remove("hidden");
+}
+
+function showStudent(){
+  hideAll();
+  document.getElementById("studentSection").classList.remove("hidden");
+}
+
+function showAdminLogin(){
+  hideAll();
+  document.getElementById("adminLoginSection").classList.remove("hidden");
+}
+
+/* Student feedback */
+document.querySelectorAll("#rating button").forEach(button=>{
+  button.addEventListener("click",()=>{
+    selectedRating=Number(button.dataset.value);
+
+    document.querySelectorAll("#rating button").forEach(b=>{
+      b.classList.toggle("active",Number(b.dataset.value)<=selectedRating);
+    });
+  });
+});
+
+function submitFeedback(){
+  const category=document.getElementById("category").value;
+  const text=document.getElementById("feedbackText").value.trim();
+
+  if(!selectedRating){
+    showMessage("studentMessage","Please select an overall rating.","error");
+    return;
+  }
+
+  if(!text){
+    showMessage("studentMessage","Please write your feedback before submitting.","error");
+    return;
+  }
+
+  const feedback=getFeedback();
+  feedback.unshift({
+    text,
+    category,
+    rating:selectedRating,
+    date:new Date().toLocaleString()
+  });
+
+  localStorage.setItem(STORAGE_KEY,JSON.stringify(feedback));
+
+  document.getElementById("feedbackText").value="";
+  selectedRating=0;
+  document.querySelectorAll("#rating button").forEach(b=>b.classList.remove("active"));
+
+  showMessage("studentMessage","✅ Thank you! Your feedback has been submitted successfully.","success");
+}
+
+/* Admin login */
+function loginAdmin(){
+  const password=document.getElementById("adminPassword").value;
+
+  if(password===ADMIN_PASSWORD){
+    hideAll();
+    document.getElementById("adminDashboard").classList.remove("hidden");
+    renderAdminDashboard();
+  }else{
+    showMessage("loginMessage","❌ Incorrect password. Please try again.","error");
+  }
+}
+
+function clearFeedback(){
+  if(confirm("Are you sure you want to delete all feedback?")){
+    localStorage.removeItem(STORAGE_KEY);
+    renderAdminDashboard();
+  }
+}
+
+/* Feedback analysis */
+function getFeedback(){
+  return JSON.parse(localStorage.getItem(STORAGE_KEY))||[];
+}
+
+function getSentiment(text,rating){
+  const words=text.toLowerCase().match(/[a-z']+/g)||[];
+  let score=0;
+
+  words.forEach((word,i)=>{
+    if(positiveWords.includes(word)) score++;
+    if(negativeWords.includes(word)) score--;
+
+    if(word==="not"||word==="never"){
+      const next=words[i+1];
+      if(next){
+        if(positiveWords.includes(next)) score-=2;
+        if(negativeWords.includes(next)) score+=2;
+      }
+    }
+  });
+
+  if(rating<=2) score-=2;
+  if(rating>=4) score+=2;
+
+  return score>0?"Positive":score<0?"Negative":"Neutral";
+}
+
+function renderAdminDashboard(){
+  const feedback=getFeedback();
+  const total=feedback.length;
+
+  const positive=feedback.filter(f=>getSentiment(f.text,f.rating)==="Positive").length;
+  const neutral=feedback.filter(f=>getSentiment(f.text,f.rating)==="Neutral").length;
+  const negative=feedback.filter(f=>getSentiment(f.text,f.rating)==="Negative").length;
+
+  document.getElementById("total").textContent=total;
+  document.getElementById("positive").textContent=positive;
+  document.getElementById("neutral").textContent=neutral;
+  document.getElementById("negative").textContent=negative;
+
+  const categories={};
+  feedback.forEach(f=>{
+    categories[f.category]=(categories[f.category]||0)+1;
+  });
+
+  document.getElementById("categories").innerHTML=total?
+    Object.entries(categories)
+      .sort((a,b)=>b[1]-a[1])
+      .map(([name,count])=>`
+        <div class="category">
+          <div class="category-top">
+            <span>${name}</span>
+            <b>${count} · ${Math.round(count/total*100)}%</b>
+          </div>
+          <div class="bar">
+            <div class="fill" style="width:${count/total*100}%"></div>
+          </div>
+        </div>
+      `).join("")
+    :"No feedback yet.";
+
+  const advice={
+    "Food Quality":"Review ingredient freshness, cooking temperature and dish quality.",
+    "Hygiene":"Clean tables more frequently, sanitize utensils and improve food-safety practices.",
+    "Price":"Introduce affordable student meals and review portion value.",
+    "Service":"Reduce waiting time, improve queue management and add staff during peak hours.",
+    "Variety":"Add more vegetarian options and rotate the weekly menu.",
+    "Portion Size":"Review serving quantities and offer different portion sizes.",
+    "Ambience":"Improve seating, ventilation, cleanliness and dining comfort.",
+    "General Feedback":"Collect more detailed feedback to identify specific issues."
+  };
+
+  const negativeCategories={};
+  feedback.forEach(f=>{
+    if(getSentiment(f.text,f.rating)==="Negative"){
+      negativeCategories[f.category]=(negativeCategories[f.category]||0)+1;
+    }
+  });
+
+  const top=Object.entries(negativeCategories).sort((a,b)=>b[1]-a[1]);
+
+  document.getElementById("suggestions").innerHTML=total?
+    (top.length?
+      top.slice(0,5).map(([category,count])=>`
+        <div class="suggestion">
+          <b>🔎 ${category}</b><br>
+          ${advice[category]}
+          <div class="section-sub" style="margin:6px 0 0">${count} negative feedback(s)</div>
+        </div>
+      `).join("")
+      :
+      '<div class="suggestion">🎉 No major negative feedback detected.</div>'
+    ):
+    "No suggestions yet.";
+
+  document.getElementById("feedbackTable").innerHTML=total?
+    feedback.map(f=>`
+      <tr>
+        <td>${f.date}</td>
+        <td>${escapeHTML(f.text)}</td>
+        <td>${f.category}</td>
+        <td>${f.rating}/5</td>
+        <td><span class="pill ${getSentiment(f.text,f.rating)}">${getSentiment(f.text,f.rating)}</span></td>
+      </tr>
+    `).join("")
+    :
+    '<tr><td colspan="5">No feedback submitted yet.</td></tr>';
+
+  renderImprovements();
+}
+
+/* Improvement Actions */
+function getImprovements(){
+  return JSON.parse(localStorage.getItem(IMPROVEMENT_KEY))||[];
+}
+
+function saveImprovements(list){
+  localStorage.setItem(IMPROVEMENT_KEY,JSON.stringify(list));
+}
+
+function addImprovement(){
+  const title=document.getElementById("improvementTitle").value.trim();
+  const category=document.getElementById("improvementCategory").value;
+  const status=document.getElementById("improvementStatus").value;
+
+  if(!title){
+    alert("Please enter an improvement title.");
+    return;
+  }
+
+  const improvements=getImprovements();
+  improvements.unshift({
+    title,
+    category,
+    status,
+    date:new Date().toLocaleDateString()
+  });
+
+  saveImprovements(improvements);
+
+  document.getElementById("improvementTitle").value="";
+  renderImprovements();
+}
+
+function changeImprovementStatus(index,newStatus){
+  const improvements=getImprovements();
+  improvements[index].status=newStatus;
+  saveImprovements(improvements);
+  renderImprovements();
+}
+
+function deleteImprovement(index){
+  if(confirm("Delete this improvement action?")){
+    const improvements=getImprovements();
+    improvements.splice(index,1);
+    saveImprovements(improvements);
+    renderImprovements();
+  }
+}
+
+function renderImprovements(){
+  const improvements=getImprovements();
+  const list=document.getElementById("improvementList");
+
+  if(!improvements.length){
+    list.innerHTML='<p class="section-sub">No improvement actions added yet.</p>';
+    return;
+  }
+
+  list.innerHTML=improvements.map((item,index)=>`
+    <div class="improvement-card ${item.status.replace(" ","-").toLowerCase()}">
+      <h4>${escapeHTML(item.title)}</h4>
+      <div class="improvement-meta">
+        ${item.category} · Added on ${item.date}
+      </div>
+      <span class="status-pill status-${item.status.replace(" ","")}">${item.status}</span>
+      <div class="improvement-actions">
+        <button class="secondary" onclick="changeImprovementStatus(${index},'Pending')">Pending</button>
+        <button class="secondary" onclick="changeImprovementStatus(${index},'In Progress')">In Progress</button>
+        <button class="secondary" onclick="changeImprovementStatus(${index},'Completed')">Completed</button>
+        <button class="danger" onclick="deleteImprovement(${index})">Delete</button>
+      </div>
+    </div>
+  `).join("");
+}
+
+/* Helpers */
+function showMessage(id,text,type){
+  document.getElementById(id).innerHTML=
+    `<div class="message ${type}">${text}</div>`;
+}
+
+function escapeHTML(text){
+  return text.replace(/[&<>"']/g,char=>({
+    "&":"&amp;",
+    "<":"&lt;",
+    ">":"&gt;",
+    '"':"&quot;",
+    "'":"&#39;"
+  }[char]));
+}
+</script>
+</body>
+</html>
